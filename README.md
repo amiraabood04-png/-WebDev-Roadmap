@@ -147,3 +147,39 @@ Then open http://localhost:8081.
 If the container name already exists, stop and remove
 the old container before creating another one.
 
+
+## Docker Management Scripts
+
+The project includes npm scripts to simplify Docker management.
+
+### Build the Docker Image
+
+```bash
+npm run docker:build
+```
+
+### Start the Application
+
+```bash
+npm run docker:run
+```
+
+The application will be available at:
+
+http://localhost:8081
+
+### Check Container Status
+
+```bash
+npm run docker:status
+```
+
+### Stop the Application
+
+```bash
+npm run docker:stop
+```
+
+These scripts use Docker Compose and make the project easier
+to run and manage on Windows, Linux, and macOS.
+
