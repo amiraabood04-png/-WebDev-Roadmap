@@ -1,0 +1,12 @@
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: webdev-roadmap:latest
+    container_name: webdev-roadmap-compose
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+git add docker-compose.yml
