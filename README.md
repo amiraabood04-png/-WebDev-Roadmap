@@ -63,9 +63,6 @@ Open http://localhost:3000 in your browser.
 - `public/` - Static assets and HTML files
 - `package.json` - Project dependencies and scripts
 
-## Docker
-
-Docker support will be added in the next development stage.
 
 ## Attribution
 
@@ -74,3 +71,79 @@ This project was initially created using Create React App.
 Create React App:
 https://github.com/facebook/create-react-app
 ```
+
+## Docker Setup
+
+This project uses a multi-stage Docker build:
+
+- Node.js 22 Alpine builds the React application.
+- Nginx Alpine serves the production files.
+
+### Prerequisites
+
+- Docker Desktop installed and running
+
+### Build the Docker Image
+
+Run the following command from the project directory:
+
+```bash
+docker build -t webdev-roadmap .
+```
+
+### Run the Container
+
+```bash
+docker run -d --name webdev-roadmap-app -p 8080:80 webdev-roadmap
+```
+
+### Access the Application
+
+Open the following URL:
+
+http://localhost:8080
+
+Use the navigation menu to explore:
+- Basics
+- Framework
+- Tips
+
+### Check the Container Status
+
+```bash
+docker ps
+```
+
+### Stop the Container
+
+```bash
+docker stop webdev-roadmap-app
+```
+
+### Remove the Container
+
+```bash
+docker rm webdev-roadmap-app
+```
+
+### Configuration
+
+- Host port: 8080
+- Container port: 80
+- Web server: Nginx
+- Environment variables: None required
+
+### Troubleshooting
+
+If port 8080 is already in use, run the container
+with a different host port, for example:
+
+```bash
+docker run -d --name webdev-roadmap-app -p 8081:80 webdev-roadmap
+```
+
+Then open http://localhost:8081.
+
+If the container name already exists, stop and remove
+the old container before creating another one.
+
