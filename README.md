@@ -1,185 +1,166 @@
-
 # WebDev Roadmap
 
-WebDev Roadmap is a React-based educational website designed to help beginners explore web development.
-
-The website introduces essential web development concepts, popular frameworks, and practical programming tips.
+WebDev Roadmap is a React-based educational website that introduces beginners to web development fundamentals, popular frameworks, and practical programming tips.
 
 ## Features
 
-- Home page with an introduction to web development
-- Basics page for fundamental web development concepts
-- Framework page for exploring web frameworks
-- Tips page for practical learning advice
-- Navigation between different learning sections
+- Home page introducing web development
+- Basics page covering fundamental concepts
+- Framework page introducing web development frameworks
+- Tips page with practical learning advice
+- Navigation between sections using React Router
 
 ## Tech Stack
 
-- React
-- JavaScript
-- HTML5
-- CSS3
+- React 18
+- JavaScript, HTML5, and CSS3
 - React Router
 - Create React App
+- Node.js 22 Alpine (build stage)
+- Nginx Alpine (production web server)
+- Docker and Docker Compose
+- Git and GitHub Actions
 
-## Getting Started
+## Project Structure
 
-### Prerequisites
-
-- Node.js
-- npm
-
-### Installation
-
-Clone the repository:
-
-```bash
-git clone <repository-url>
+```text
+src/                    React components and pages
+public/                 Static assets
+Dockerfile              Multi-stage Docker build
+.dockerignore           Files excluded from Docker build context
+.gitignore              Files excluded from Git tracking
+docker-compose.yml      Docker Compose configuration
+.github/workflows/      Automated Docker build workflow
+docs/notes.md           Technical lessons and challenges
+docs/screenshots/       Assignment evidence screenshots
+package.json            Dependencies and convenience scripts
 ```
 
-Navigate to the project directory:
+## Prerequisites
+
+For local development, install Node.js and npm.
+
+For containerized deployment, install Docker Desktop (or Docker Engine with Docker Compose) and make sure it is running.
+
+## Clone the Repository
 
 ```bash
-cd WebDev-Roadmap
+git clone https://github.com/amiraabood04-png/-WebDev-Roadmap.git
+cd -WebDev-Roadmap
 ```
 
-Install dependencies:
+## Run Locally (Without Docker)
 
 ```bash
 npm install
-```
-
-Start the development server:
-
-```bash
 npm start
 ```
 
 Open http://localhost:3000 in your browser.
 
-## Project Structure
+## Run with Docker
 
-- `src/` - React components and application pages
-- `public/` - Static assets and HTML files
-- `package.json` - Project dependencies and scripts
+The Dockerfile uses a multi-stage build: Node.js installs dependencies and builds the React production files; Nginx serves the resulting static application.
 
-
-## Attribution
-
-This project was initially created using Create React App.
-
-Create React App:
-https://github.com/facebook/create-react-app
-```
-
-## Docker Setup
-
-This project uses a multi-stage Docker build:
-
-- Node.js 22 Alpine builds the React application.
-- Nginx Alpine serves the production files.
-
-### Prerequisites
-
-- Docker Desktop installed and running
-
-### Build the Docker Image
-
-Run the following command from the project directory:
+### 1. Build the Image
 
 ```bash
 docker build -t webdev-roadmap .
 ```
 
-### Run the Container
+### 2. Start the Container
 
 ```bash
 docker run -d --name webdev-roadmap-app -p 8080:80 webdev-roadmap
 ```
 
-### Access the Application
+### 3. Verify the Application
 
-Open the following URL:
+Open http://localhost:8080 and check the Home, Basics, Framework, and Tips pages.
 
-http://localhost:8080
-
-Use the navigation menu to explore:
-- Basics
-- Framework
-- Tips
-
-### Check the Container Status
+To inspect running containers:
 
 ```bash
 docker ps
 ```
 
-### Stop the Container
+The container includes an HTTP healthcheck. After startup, `docker ps` can report `(healthy)` once the check passes.
+
+### 4. Stop and Remove the Container
 
 ```bash
 docker stop webdev-roadmap-app
-```
-
-### Remove the Container
-
-```bash
 docker rm webdev-roadmap-app
 ```
 
-### Configuration
-
-- Host port: 8080
-- Container port: 80
-- Web server: Nginx
-- Environment variables: None required
-
-### Troubleshooting
-
-If port 8080 is already in use, run the container
-with a different host port, for example:
+## Run with Docker Compose (Bonus A)
 
 ```bash
-docker run -d --name webdev-roadmap-app -p 8081:80 webdev-roadmap
+docker compose config
+docker compose up -d --build
+docker compose ps
 ```
 
-Then open http://localhost:8081.
+Open http://localhost:8081. To stop and remove the Compose-managed container and network:
 
-If the container name already exists, stop and remove
-the old container before creating another one.
+```bash
+docker compose down
+```
 
+The Compose configuration uses host port **8081** mapped to container port **80**, so it can coexist with a manually started container on host port 8080.
 
-## Docker Management Scripts
+## Docker Management Scripts (Bonus E)
 
-The project includes npm scripts to simplify Docker management.
+The following npm scripts wrap Docker Compose:
 
-### Build the Docker Image
+| Command | Purpose |
+|---|---|
+| `npm run docker:build` | Build the Docker image |
+| `npm run docker:run` | Start the Compose service |
+| `npm run docker:status` | Show Compose container status |
+| `npm run docker:stop` | Stop and remove the Compose service |
+
+After modifying application code, rebuild the image before restarting the Compose service:
 
 ```bash
 npm run docker:build
-```
-
-### Start the Application
-
-```bash
 npm run docker:run
 ```
 
-The application will be available at:
+## Configuration
 
-http://localhost:8081
+| Setting | Value |
+|---|---|
+| Production web server | Nginx |
+| Container port | 80 |
+| Docker host port | 8080 |
+| Docker Compose host port | 8081 |
+| Required application environment variables | None |
 
-### Check Container Status
+If a host port is already in use, stop the conflicting container or choose a different free host port.
 
-```bash
-npm run docker:status
-```
+## GitHub Actions CI (Bonus B)
 
-### Stop the Application
+The workflow in `.github/workflows/docker-build.yml` automatically builds the Docker image for pushes to `main` and pull requests targeting `main`. The workflow verifies the image build and does not publish it to a container registry.
 
-```bash
-npm run docker:stop
-```
+## Additional Bonus Features
 
-These scripts use Docker Compose and make the project easier
-to run and manage on Windows, Linux, and macOS.
+- **Multi-stage build (Bonus C):** Uses Node.js for building and Nginx for serving production output.
+- **Healthcheck (Bonus D):** Checks the HTTP response of the running Nginx container.
+- **Pull Request workflow (Bonus G):** A documentation feature branch was merged into `main` through Pull Request #1.
 
+## Troubleshooting
+
+- **`npm ci` lockfile error:** Ensure `package.json` and `package-lock.json` are synchronized. The technical notes describe the dependency issue encountered in this assignment.
+- **Container name already exists:** Stop and remove the existing container before running another one with the same name.
+- **Port already allocated:** Stop the container using the port or map a different available host port.
+- **Docker cannot download images:** Check Docker Desktop connectivity and DNS configuration.
+
+## Documentation and Evidence
+
+- Technical notes: [`docs/notes.md`](docs/notes.md)
+- Screenshots: [`docs/screenshots/`](docs/screenshots/)
+
+## Attribution
+
+This project was originally bootstrapped using [Create React App](https://github.com/facebook/create-react-app). Its educational site content and Docker workflow were developed as part of the OS Lab assignment.
